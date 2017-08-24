@@ -1,0 +1,53 @@
+package android.support.v4.text;
+
+import android.annotation.TargetApi;
+import android.support.annotation.RequiresApi;
+import android.util.Log;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Locale;
+
+@TargetApi(23)
+@RequiresApi(23)
+class ICUCompatApi23
+{
+  private static final String TAG = "ICUCompatIcs";
+  private static Method sAddLikelySubtagsMethod;
+
+  static
+  {
+    try
+    {
+      sAddLikelySubtagsMethod = Class.forName("libcore.icu.ICU").getMethod("addLikelySubtags", new Class[] { Locale.class });
+      return;
+    }
+    catch (Exception localException)
+    {
+    }
+    throw new IllegalStateException(localException);
+  }
+
+  public static String maximizeAndGetScript(Locale paramLocale)
+  {
+    try
+    {
+      String str = ((Locale)sAddLikelySubtagsMethod.invoke(null, new Object[] { paramLocale })).getScript();
+      return str;
+    }
+    catch (InvocationTargetException localInvocationTargetException)
+    {
+      Log.w("ICUCompatIcs", localInvocationTargetException);
+      return paramLocale.getScript();
+    }
+    catch (IllegalAccessException localIllegalAccessException)
+    {
+      while (true)
+        Log.w("ICUCompatIcs", localIllegalAccessException);
+    }
+  }
+}
+
+/* Location:           C:\apk\dex2jar-0.0.9.15\dex2jar-0.0.9.15\classes_dex2jarNor.jar
+ * Qualified Name:     android.support.v4.text.ICUCompatApi23
+ * JD-Core Version:    0.6.0
+ */
